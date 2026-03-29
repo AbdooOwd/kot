@@ -3,7 +3,7 @@ mod utils;
 
 use std::{
     env,
-    fs::{self, DirEntry, read_link},
+    fs::read_link,
     os::unix::fs::symlink,
     path::{Path, PathBuf},
     sync::RwLock
@@ -115,7 +115,7 @@ fn create_symlink(target: PathBuf, path: PathBuf, ignore_existing_dir: bool) {
                         }
 
                         let entry = entry.unwrap();
-                        /// destination path, but with the sub-directory we're symlinking
+                        // destination path, but with the sub-directory we're symlinking
                         debug_log!("Gonna symlink entry: '{}' into '{}'",
                             entry.path().to_str().unwrap(),
                             new_symlink_path.to_str().unwrap());
