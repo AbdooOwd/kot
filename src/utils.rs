@@ -1,7 +1,15 @@
 use std::{fs::DirEntry, path::PathBuf, process::{Command, exit}};
 
+#[macro_export] macro_rules! debug_log {
+    ($($args:tt)*) => {
+        if *DEBUG_LOGS.read().unwrap() {
+            println!($($args)*);
+        }
+    };
+}
+
 /// Works on files & dirs cuz it uses the "cp" command
-pub fn copy_stuff(dir: DirEntry, dest: PathBuf) {
+pub fn _copy_stuff(dir: DirEntry, dest: PathBuf) {
     Command::new("cp")
         .args([
             "-r",

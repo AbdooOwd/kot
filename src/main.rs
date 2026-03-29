@@ -22,13 +22,6 @@ use clap::Parser;
 *   -2: 'source' argument provided isn't a directory
 * */
 
-macro_rules! debug_log {
-    ($($args:tt)*) => {
-        if *DEBUG_LOGS.read().unwrap() {
-            println!($($args)*);
-        }
-    };
-}
 
 static DEBUG_LOGS: RwLock<bool> = RwLock::new(false);
 
