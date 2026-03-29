@@ -1,4 +1,4 @@
-use std::{fs::DirEntry, path::PathBuf, process::Command};
+use std::{fs::DirEntry, path::PathBuf, process::{Command, exit}};
 
 /// Works on files & dirs cuz it uses the "cp" command
 pub fn copy_stuff(dir: DirEntry, dest: PathBuf) {
@@ -16,4 +16,9 @@ pub fn platform_is_unix(os_name: String) -> bool {
     matches!(os_name.as_str(), "linux" | "macos" | "freebsd" | "openbsd" |
         "dragonfly" | "solaris" | "illumos" | "aix" |
         "hurd" | "redox" | "haiku")
+}
+
+/// Prints exit code before exitting process
+pub fn our_exit(code: i32) -> ! {
+    exit(code);
 }
