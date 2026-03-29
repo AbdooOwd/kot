@@ -3,7 +3,7 @@ mod utils;
 
 use std::{
     env,
-    fs::read_link,
+    fs::{ read_link, canonicalize },
     os::unix::fs::symlink,
     path::{Path, PathBuf},
     sync::RwLock
@@ -70,8 +70,18 @@ fn main() {
 
 /// Creates a symlink to a file `target` with the same filename in `path`
 fn create_symlink(target: PathBuf, path: PathBuf, ignore_existing_dir: bool) {
-    let new_symlink_path = path.join(target.file_name()
-        .unwrap_or_else(|| panic!("Couldn't get target's file name for: '{}'", target.to_str().unwrap())));
+    let target = target.canonicalize().unwrap();
+    let path = path.canonicalize().unwrap();
+
+    if target.file_name().unwrap().to_str().unwrap() == ".git" && target.is_dir() {
+        println!("Ignoring '.git/'");
+        return;
+    }
+
+    let target_filename = target.file_name()
+        .unwrap_or_else(|| panic!("Couldn't get target's file name for: '{}'", target.to_str().unwrap()));
+    let new_symlink_path = path.join(target_filename);
+
     if new_symlink_path.exists() {
         println!("A file of the same path and name already exists!");
 
@@ -124,8 +134,11 @@ fn create_symlink(target: PathBuf, path: PathBuf, ignore_existing_dir: bool) {
             }
         }
     } else {
-        debug_log!("Creating symlink for '{}' at '{}'", target.to_str().unwrap(), new_symlink_path.to_str().unwrap());
+        debug_log!("Creating symlink for '{}' as '{}'", target.to_str().unwrap(), new_symlink_path.to_str().unwrap());
+        debug_log!("New symlink expected to be at {}", new_symlink_path.to_str().unwrap());
+
         symlink(&target, &new_symlink_path).expect("Couldn't create symlink!");
+
         println!("Created symlink to '{}' in '{}'",
             target.to_str().unwrap(), new_symlink_path.to_str().unwrap());
     }
